@@ -7,6 +7,90 @@
 <body>
 <canvas id="draw" width="800" height="800"></canvas>
 <script>
+  // select all the data
+  const canvas = document.querySelector('#draw');
+  // what to draw on/ we cant draw on html, we use contexrt
+  const ctx = canvas.getContext('2d');
+
+  //size up the canvas to be the same size as the window
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  // design the lines
+  ctx.strokeStyle = 'black';
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+  ctx.lineWidth = 100;
+
+  // variables to help us change the design later
+  // when we can draw !
+  let isDrawing = false;
+  // for each line we need starting & ending x,y.
+  let lastX = 0;
+  let lastY = 0;
+  // defing the color, by using hsl, starting at 0.
+  let hue = 0;
+  // change the line width, depend on which direction/ more than 100, less than 1
+  // ture means that its gonna be builing up
+  let direction = true;
+
+  // draw function, while we drawing what will happened using this fn
+  // were call this function whenever we move the mouse.
+  function draw(e) {
+    // if there's not drawing
+    // ,stop the fn from running when the mouse is not down
+    if (!isDrawing) return;
+    console.log(e);
+    // as we draw, setup the color
+    ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+    // start a path
+    ctx.beginPath();
+    // start from
+    ctx.moveTo(lastX, lastY);
+    // go to (value are coming from the actual even that happened)
+    ctx.lineTo(e.offsetX, e.offsetY);
+    // we call it
+    ctx.stroke();
+    // when were done with the draw fn we want to update last X & Y
+    // so not all the lines will start from the same point (0).
+    [lastX, lastY] = [e.offsetX, e.offsetY];
+    // increment the color, first time will be 1, second will be 2 etc.
+    hue++;
+    // limit the color by reset from the start.
+    if(hue >= 360) {
+      hue = 0 ;
+    }
+
+    // increment the line
+    ctx.lineWidth ++;
+    // limit the max width of the line
+    if(ctx.lineWidth >= 100 || ctx.lineWidth <= 1) {
+      // flip the direction
+      direction = !direction;
+    }
+    // if direction == true -> will increment
+    // greater than 100 or smaller than 1 flip
+    if(direction) {
+      ctx.lineWidth++;
+      // else will decrement the line
+      } else {
+        ctx.lineWidth--;
+    }
+  }
+// what's gonna happened when the mouse is down
+canvas.addEventListener('mousedown', (e) => {
+  isDrawing = true;
+  // update the last x & y, so while we 'mousedown' will update them before 'mousemove'
+  // so not all the lines will start from the end of the previous line.
+  // [e.offsetX, e.offsetY] -> will put us where we wanna go/start.
+  [lastX, lastY] = [e.offsetX, e.offsetY];
+});
+
+// after the mouse is down and were movinf the mouse will call the draw fn.
+canvas.addEventListener('mousemove', draw);
+// no drawing in these 2 cases
+canvas.addEventListener('mouseup', () => isDrawing = false);
+canvas.addEventListener('mouseout', () => isDrawing = false);
+
 </script>
 
 <style>
