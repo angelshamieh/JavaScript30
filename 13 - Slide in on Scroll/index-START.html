@@ -58,6 +58,49 @@
       };
     }
 
+    // get all the imgs that we will be listing for
+    // the imgs ny defult are hidden
+    const sliderImages = document.querySelectorAll('.slide-in');
+
+    //create a  fn to run everytime a person scrolls, passing the event
+    function checkSlide(e) {
+      // loop every img and check img which one should be shown
+      sliderImages.forEach(sliderImage => {
+        // we need to figure out if the img on the oage or not
+        // we need to fiqure out how far the page is scroll down
+        // window.scrollY will show us how much we scroll down from the top of the page
+        // adding window.innerHeight will give the pixel level
+        // from where you currently are at the bottom.
+        const slideInAt = (window.scrollY + window.innerHeight) -
+        // we dont want to slide only at the bottom we need to slide half way through
+        // divided by 2 so it can give us the middle of the img
+        sliderImage.height / 2;
+
+        //offsetTop -> will give us the top of the img how far os from the top page.
+        //  sliderImage,height -> will give us the actual hight of the img.
+        const imageBottom = sliderImage.offsetTop + sliderImage.height;
+
+
+        const isHalfShown = slideInAt > sliderImage.offsetTop;
+        // not scroll out aeay from the img.
+        const isNotScrolledPast = window.scrollY < imageBottom
+
+        if(isHalfShown && isNotScrolledPast) {
+          sliderImage.classList.add('active');
+        } else {
+          sliderImage.classList.remove('active');
+        }
+
+      });
+    }
+
+    // usually when we use scroll, it causes a lot of events running which can slow down
+    // or causes other problems. by using debounse we basicallly say that run
+    // the fn every X time, in our case every 20 sec.
+    window.addEventListener('scroll',debounce(checkSlide));
+
+
+
   </script>
 
   <style>
@@ -68,11 +111,11 @@
       font-size: 20px;
       font-weight: 200;
     }
-    
+
     body {
       margin: 0;
     }
-    
+
     *, *:before, *:after {
       box-sizing: inherit;
     }
@@ -107,7 +150,7 @@
     .align-left.slide-in {
       transform: translateX(-30%) scale(0.95);
     }
-    
+
     .align-right.slide-in {
       transform: translateX(30%) scale(0.95);
     }
