@@ -182,6 +182,31 @@
     </li>
   </ul>
 <script>
+
+// converted into array(its nodeList), to use map
+  const timeNodes = Array.from(document.querySelectorAll('[data-time]'));
+
+  const seconds = timeNodes
+  //to get the time for each secs & put it in array
+    .map(node => node.dataset.time)
+    // for each one split the mins and secs to convert it into seconds.
+    .map(timeCode => {
+      // using parseFloat because its a string so we can do the calculation
+      const[mins, secs] = timeCode.split(':').map(parseFloat);
+      return (mins * 60) + secs;
+    })
+    // the second array convert it into one big #!
+    .reduce((total, vidSeconds) => {
+      return total + vidSeconds
+    });
+
+    // chop the seconds down into hours, minutes & seconds.
+    let secondsLeft = seconds;
+    const hours = Math.floor(secondsLeft / 3600);
+    secondsLeft = secondsLeft % 3600;
+    const mins = Math.floor(secondsLeft / 60);
+    secondsLeft = secondsLeft % 60;
+
 </script>
 </body>
 </html>
