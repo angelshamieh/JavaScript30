@@ -18,7 +18,7 @@
     html {
       font-size: 100px;
     }
-    
+
     body {
       margin: 0;
       font-family: sans-serif;
@@ -59,6 +59,22 @@
     /*Compass: https://thenounproject.com/search/?q=compass&i=592352*/
   </style>
   <script>
+
+    const arrow = document.querySelector('.arrow');
+    const speed = document.querySelector('.speed-value');
+
+    // listen to user's position
+    // watchPostion: is going to update over time, give us data as much as we need it
+    //(other option instaed of  watchPostion  getCurretPosition -> give us the one)
+    navigator.geolocation.watchPosition((data) => {
+      speed.textContent = data.coords.speed;
+      arrow.style.transform = `rotate(${data.coords.heading}deg)`;
+      // the other case if the user doesnt allow u to use the location.
+    }, (err)=> {
+      console.err(err);
+      alert("HEY !")
+    };
+
   </script>
 </body>
 </html>
