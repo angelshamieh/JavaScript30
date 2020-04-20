@@ -11,6 +11,46 @@
 
 <script>
   window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  // as were speaking will populate the words, if we dont do that will not see the words before we stop speaking.
+  // will populate the words as were speaking
+ const recognition = new SpeechRecognition();
+  recognition.interimResults = true;
+
+  // create a P
+  let p = document.createElement('p');
+  // to get the words
+  const words = document.querySelector('.words');
+  // to put it in the DOM as were working with it, where to add it(in the words class)
+  words.appendChild(p);
+
+  recognition.addEventListener('result', e => {
+    console.log(e.resutls);
+    const transcript = Array.from(e.results)
+    // taking the first element in the array
+      .map(result => result[0])
+      // for the first element map again and take the trascript
+      .map(result => result.transcript)
+      // sometimes is divids the sentence into 2 words(transcript)
+      // join all of them together - to have P(one big srting).
+      .join('')
+      // adding the text into the P that we created, by adding the trascript.
+      p.textContent = transcript;
+      if(e.results[0].isFinal) {
+        // create new P, over write the prevoius one
+        p = document.createElement('p');
+        words.appendChild(p);
+      }
+
+      console.log(transcript);
+
+  });
+
+  // when we stop speaking & we  start speaking again it doesnt work.
+  // because were listing for the results, once its finished its unbined itself.
+  recognition.addEventListener('end', recognition.start);
+
+  // dont wanna run it on the page load.
+  recognition.start();
 
 
 </script>
@@ -40,7 +80,7 @@
       position: relative;
       line-height: 3rem;
     }
-    
+
     p {
       margin: 0 0 3rem;
     }
