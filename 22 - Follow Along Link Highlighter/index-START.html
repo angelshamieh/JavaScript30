@@ -27,6 +27,38 @@
 
   <script>
     // 👀👀👀👀👀👀👀👀👀👀👀👀👀👀👀
+
+    const triggers = document.querySelectorAll('a');
+    // create a new element in the html to add the class
+    const highlight = document.createElement('span');
+    // add the new class to the new elemenet
+    highlight.classList.add('highlight');
+    // add it to the DOM
+    document.body.appendChild(highlight);
+
+    function highlightLink() {
+      // we need to fiqure out how big is the element we hovered
+      // this -> each link
+      const linkCoords = this.getBoundingClientRect();
+      // when we scroll down, the highlight doesnt match,
+      //using scrollY & x were able to know the correct postion even if we scroll down/
+      console.log(linkCoords);
+      const coords = {
+        width: linkCoords.width,
+        height: linkCoords.height,
+        top: linkCoords.top + window.scrollY,
+        left: linkCoords.left + window.scrollX
+    };
+
+      highlight.style.width = `${coords.width}px`;
+      highlight.style.height = `${coords.height}px`;
+      // we want to animate the highlight to the correct elements
+      highlight.style.transform = `translate(${coords.left}px, ${coords.top}px)`;
+    }
+
+    // we want to listen to someone enter a link
+  triggers.forEach(a => a.addEventListener('mouseenter', highlightLink));
+
   </script>
 </body>
 </html>
