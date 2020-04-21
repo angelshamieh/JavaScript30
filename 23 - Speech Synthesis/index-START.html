@@ -29,12 +29,70 @@
     </div>
 
 <script>
+  // create new speech(what is the person is going to say)
   const msg = new SpeechSynthesisUtterance();
+  // the voice are going to be added to
   let voices = [];
   const voicesDropdown = document.querySelector('[name="voice"]');
   const options = document.querySelectorAll('[type="range"], [name="text"]');
   const speakButton = document.querySelector('#speak');
   const stopButton = document.querySelector('#stop');
+
+  // to set what fe have in the text area as a defult.
+  // we want to select the box and set it to be whatever in there
+  msg.text = document.querySelectorAll('[name="text"]').value;
+
+  function populateVoices() {
+    // over write the voices variable
+    voices = this.getVoices();
+    voicesDropdown.innerHTML = voices
+    // filter the list if its include en
+      .filter(voice => voice.lang.includes('en'))
+      .map(voice => `<option value="${voice.name}">${voice.name} (${voice.lang})</option>`)
+      .join('');
+  }
+
+  // because we had a defult voice, we need to set the option to choose one.
+  function setVoice(){
+    // msg.noice = "name of the voice" -> it's not a valid property.
+    // find the voice that lines up with the value
+    msg.voice = voices.find(voice => voice.name === this.value);
+
+  }
+
+  // everytime we choose options we want to restart it.
+  function toggle(startOver = true) {
+    // to cancel everything we have
+    speechSynthesis.cancel();
+    // startOver = false -> will stop the fn.
+    if(startOver) {
+    // restart the entire thing
+    speechSynthesis.speak(msg);
+    }
+  }
+
+  function setOption(){
+    // this -> the option (rate, pitch or text)
+    // what proporty was changed, and what was changed to.
+    msg[this.name] = this.value;
+    // to start over again.
+    toggle();
+  }
+
+  // populate all different voices - voices built in the mac.
+  // global variable -> speechSynthesis
+  speechSynthesis.addEventListener('voicesChanged', populateVoices);
+  // once we choose from the voice "change evenet", we will call the setVoice fn.
+  voicesDropdown.addEventListener('change', setVoice);
+  // for the other options
+  options.forEach(option => option.addEventListener('change', setOption));
+  speakButton.addEventListener('click', toggle);
+  // if we call toggle(false) its gonna run on page load/ the stop button wont work.
+  // bind pass it 1. the value 2. the argument. (in our case the value is null and the argument false)
+  // stopButton.addEventListener('click', toggle.bind(null, false))
+  // or fn in the same line - inline fn (the problem is that creating another fn.)
+  stopButton.addEventListener('click', () => toggle(false));
+
 </script>
 
 </body>
