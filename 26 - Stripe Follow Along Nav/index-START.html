@@ -79,11 +79,11 @@
     box-sizing: border-box;
     font-family: "Arial Rounded MT Bold", "Helvetica Rounded", Arial, sans-serif;
   }
-  
+
   *, *:before, *:after {
     box-sizing: inherit;
   }
-  
+
   body {
     margin: 0;
     min-height: 100vh;
@@ -149,7 +149,7 @@
   .trigger-enter-active .dropdown {
     opacity: 1;
   }
-  
+
   .dropdownBackground {
     width: 100px;
     height: 100px;
@@ -220,6 +220,57 @@
 </style>
 
 <script>
+  const triggers = document.querySelectorAll('.cool > li');
+  // no node list, only our element. thats why were using querySelector
+  const background = document.querySelector('.dropdownBackground');
+  const nav = document.querySelector('.top');
+
+  // listen for hover in or hover out
+  function handleEnter(){
+    // 1. show off the dropdown list, when u hover over- by adding/removing classes
+    this.classList.add('trigger-enter');
+    // add one more class after 150 milliseconds
+    // using the arrow fn in this case with this, because it;s method inside fn,
+    // if we didnt add the arrow then will take the this as global(window)
+    setTimeout(() => {
+      if(this.classList.contains('trigger-enter')) {
+        this.classList.add('trigger-enter-active')
+      }
+    }, 150);
+    // 2. add the white background
+    background.classList.add('open');
+    // we want to grap the dropdown, were adding it here because we need the specific one
+    // with hover ove (we cannt do it before the fn.)
+    const dropdown = this.querySelector('.dropdown');
+    // to get coords
+    const dropdownCoords = dropdown.getBoundingClientRect();
+    // coords for the nav
+    const navCoords = nav.getBoundingClientRect();
+    // figure out where are the coords for everything,
+    // 1. we need to put both heighta & width together.
+    const coords = {
+      height: dropdownCoords.height,
+      width: dropdownCoords.width,
+      top: dropdownCoords.top - navCoords.top,
+      left: dropdownCoords.left - navCoords.left,
+    };
+    // 2. set the style
+    background.style.setProperty('width', `${coords.width}px`);
+    background.style.setProperty('height', `${coords.height}px`);
+    background.style.setProperty('transform', `translate(${coords.left}px, ${coords.top}px`)
+  }
+
+
+  function handleLeave(){
+    this.classList.remove('trigger-enter', 'trigger-enter-active');
+    background.classList.remove('open');
+  }
+
+
+
+  triggers.forEach(trigger => trigger.addEventListener('mouseenter', handleEnter));
+  triggers.forEach(trigger => trigger.addEventListener('mouseleave', handleLeave));
+
 </script>
 
 </body>
