@@ -35,6 +35,46 @@
   </div>
 
 <script>
+  const slider = document.querySelector('.items');
+
+  // variables
+  let isDown = false;
+  //were not assigning any values because thats gonna happened in the events.
+  let startX;
+  let scrollleft;
+
+slider.addEventListener(mousedown, (e) => {
+  isDown = true;
+  slider.classList.add('active');
+  //pageX is gonna tell us the X coordinates on the actual page
+  // slider.offsetLeft -> is to make sure that were inside the 'ITEM', not on the page
+  startX = e.pageX - slider.offsetLeft;
+  // to fiquer out where the intial scroll is
+  scrollLeft = slider. slider.scrollLeft;
+});
+
+slider.addEventListener(mouseleave, () => {
+  isDown = false;
+  slider.classList.remove('active');
+});
+
+slider.addEventListener(mouseup, () => {
+   isDown = false;
+   slider.classList.remove('active');
+});
+
+slider.addEventListener(mousemove, () => {
+  if(!isDown) return; // stop the fn from running
+  // will stop from selecting of text
+  e.preventDefault();
+  const x = e.pageX - slider.offsetLeft;
+  // the difference between the initial point (how far to the left & to the right)
+  const walk = (x - startX) * 3;
+  slider.scrollLeft = scrollLeft - walk;
+
+});
+
+
 </script>
 
   </body>
